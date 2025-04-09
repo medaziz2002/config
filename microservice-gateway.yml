@@ -1,11 +1,13 @@
-
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
+
 spring:
+  application:
+    name: api-gateway
   cloud:
     gateway:
       discovery:
@@ -13,8 +15,11 @@ spring:
           enabled: true
           lower-case-service-id: true
       globalcors:
-        add-to-simple-url-handler-mapping: true
-   
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
       routes:
         - id: microservice-authentification
           uri: lb://microservice-authentification
@@ -22,16 +27,29 @@ spring:
             - Path=/authentification/**
           filters:
             - RewritePath=/authentification/(?<path>.*), /$\{path}
+        
+        - id: microservice-logement
+          uri: lb://microservice-logement
+          predicates:
+            - Path=/logement/**
+          filters:
+            - RewritePath=/logement/(?<path>.*), /$\{path}
+        
         - id: openapi
           uri: http://localhost:${server.port}
           predicates:
-            - Path=/swagger-ui/**
-     
+            - Path=/v3/api-docs/**,/swagger-ui/**,/swagger-ui.html
+
+server:
+  port: 8080
+
 management:
-  endpoint:
-    gateway:
-      enabled: true
   endpoints:
     web:
       exposure:
         include: "*"
+  endpoint:
+    gateway:
+      enabled: true
+    health:
+      show-details: always
