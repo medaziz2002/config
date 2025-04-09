@@ -41,7 +41,7 @@ spring:
             - Path=/v3/api-docs/**,/swagger-ui/**,/swagger-ui.html
 
 server:
-  port: 8080
+  port: 8888
 
 management:
   endpoints:
