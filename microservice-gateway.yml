@@ -34,6 +34,13 @@ spring:
             - Path=/logement/**
           filters:
             - RewritePath=/logement/(?<path>.*), /$\{path}
+
+        - id: payment-microservice
+          uri: lb://payment-microservice
+          predicates:
+            - Path=/payment/**
+          filters:
+            - RewritePath=/payment/(?<path>.*), /$\{path}
         
         - id: openapi
           uri: http://localhost:${server.port}
